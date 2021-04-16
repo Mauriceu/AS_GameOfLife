@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.IO.Compression;
+using System.Threading;
 
 namespace AS_GameOfLife
 {
@@ -6,20 +9,38 @@ namespace AS_GameOfLife
     {
         public static void Main()
         {
-            var gameBoard = new GameBoard();
-            gameBoard.FillBoard();
-            gameBoard.NextGeneration();
 
-                
-            for (int i = 0; i <= gameBoard.Board.Count-1; i++)
+            //Test();
+
+        }
+
+        private static void Test()
+        {
+            var board = new GameBoard();
+            board.FillBoard(6, 6);
+            PrintBoard(board.Board);
+            board.NextGeneration();
+            PrintBoard(board.Board);
+        }
+        private static void PrintBoard(List<List<Cell>> board)
+        {
+            Console.WriteLine();
+            Console.WriteLine("---Board---");
+
+            for (int posY = 0; posY < board.Count; posY++)
             {
-                var list = gameBoard.Board[i];
-                Console.Write("-----------------------------------------------");
-                for (int ii = 0; ii <= gameBoard.Board[i].Count-1; ii++)
+                for (int posX = 0; posX < board[posY].Count; posX++)
                 {
-                    var cell = gameBoard.Board[i][i];
-                    Console.Write(cell.IsDead() + ", ");
-                } 
+                    var cell = board[posY][posX];
+                    string txt = "0";
+                    if (cell.IsAlive())
+                    {
+                        txt = "1";
+                    }
+                    
+                    Console.Write(txt + ", ");
+                }
+                Console.WriteLine();
             }
         }
     }

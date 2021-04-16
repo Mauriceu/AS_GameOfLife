@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace AS_GameOfLife
@@ -10,36 +11,35 @@ namespace AS_GameOfLife
         private const int BIRTH_MINIMUM = 2;
         private const int BIRTH_MAXIMUM = 3;
 
+        private readonly string _id;
         private List<Cell> _neighbours;
         private bool _cellLivesAfterGenerationChange;
-        private bool _cellIsDead;
+        private bool _cellIsAlive;
 
-        public void Main()
+        public Cell(string id, bool value)
         {
+            _id = id;
             _neighbours = new List<Cell>();
-            _cellIsDead = true;
+            _cellIsAlive = value;
+            _cellLivesAfterGenerationChange = _cellIsAlive;
         }
 
-        public void AddNeighbour(Cell cell)
+        public string ID => _id;
+
+        public void AddNeighbour(Cell neighbour)
         {
-            _neighbours.Add(cell);   
+            _neighbours.Add(neighbour);
         }
 
-        public bool IsDead()
+        
+        public bool IsAlive()
         {
-            return _cellIsDead;
+            return _cellIsAlive;
         }
 
         public void EvolveCell()
-        {
-            if (_cellLivesAfterGenerationChange)
-            {
-                _cellIsDead = false;
-            }
-            else
-            {
-                _cellIsDead = true;
-            }
+        { 
+            _cellIsAlive = _cellLivesAfterGenerationChange;
         }
 
 
@@ -49,26 +49,28 @@ namespace AS_GameOfLife
 
             foreach (var cell in _neighbours)
             {
-                if (!cell._cellIsDead)
+                if (cell.IsAlive())
                 {
                     livingNeighbours++;
                 }
 
                 // Zelle stirbt an Überpopulation
-                if (!_cellIsDead && livingNeighbours >= OVERPOPULATION_MINIMUM)
+                if (IsAlive() && livingNeighbours >= OVERPOPULATION_MINIMUM)
                 {
                     _cellLivesAfterGenerationChange = false;
+                    return;
                 }
             }
 
             // Zelle stirbt an Einsamkeit
-            if (!_cellIsDead && livingNeighbours <= SOLITUDE_MAXIMUM)
+            if (IsAlive() && livingNeighbours <= SOLITUDE_MAXIMUM)
             {
                 _cellLivesAfterGenerationChange = false;
+                return;
             }
 
             // Zelle wird geboren (falls Tod)
-            if (_cellIsDead && livingNeighbours is >= BIRTH_MINIMUM and <= BIRTH_MAXIMUM)
+            if (!IsAlive() && livingNeighbours is >= BIRTH_MINIMUM and <= BIRTH_MAXIMUM)
             {
                 _cellLivesAfterGenerationChange = true;
             }

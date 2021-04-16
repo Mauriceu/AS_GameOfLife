@@ -13,25 +13,67 @@ namespace AS_GameOfLife
          */
         public List<List<Cell>> Board;
 
-        public void Main()
-        {
-            FillBoard();
-        }
-        
+        private int _width;
+        private int _height;
+
         /**
          * Erstellt die 2D-Liste, anhand der Übergabeparameter wird die Größe festgelegt
          */
-        public void FillBoard(int x = 5, int y = 5)
+        public void FillBoard(int x, int y)
         {
+            _width = x;
+            _height = y;
             Board = new List<List<Cell>>();
-                
-            for (int i = 0; i <= x; i++)
+
+            Random r = new Random();
+            for (int posY = 0; posY < _height; posY++)
             {
-                Board[i] = new List<Cell>();
-                for (int ii = 0; ii <= y; ii++)
+                Board.Add(new List<Cell>());
+                for (int posX = 0; posX < _width; posX++)
                 {
-                    Board[i][ii] = new Cell();
+                    var value = false;
+                    int num = r.Next(1, 100);
+                    if (num < 40)
+                    {
+                        value = true;
+                    }
+
+                    Cell cell = new Cell((posY.ToString() + posX.ToString()), value);
+                    Board[posY].Add(cell);
                 } 
+            }
+            SetNeighbourCells();
+        }
+
+        private void SetNeighbourCells()
+        {
+            for (int posY = 0; posY < _height; posY++)
+            {
+                for (int posX = 0; posX < _width; posX++)
+                {
+                    IterateRowHelper(posX, posY, -1);
+                    IterateRowHelper(posX, posY, 0);
+                    IterateRowHelper(posX, posY, 1);
+                } 
+            }
+        }
+
+        private void IterateRowHelper(int posX, int posY, int offsetY)
+        {
+            for (var offsetX = -1; offsetX <= 1; offsetX++)
+            {
+                Cell neighbour = null;
+                try
+                {
+                    neighbour = Board[posY + offsetY][posX + offsetX];
+                }
+                catch (Exception e) {}
+
+                if (neighbour != null &&
+                    neighbour.ID != Board[posY][posX].ID)
+                {
+                    Board[posY][posX].AddNeighbour(neighbour);
+                }
             }
         }
 
@@ -41,32 +83,28 @@ namespace AS_GameOfLife
          */
         public void NextGeneration()
         {
-            for (int i = 0; i <= Board.Count-1; i++)
+            foreach (var row in Board)
             {
-                List<Cell> row = Board[i];
-                for (int ii = 0; ii <= row.Count-1; ii++)
+                foreach (Cell cell in row)
                 {
-                    Cell cell = row[ii];
                     cell.CheckIfCellLivesAfterGenerationChange();
-                } 
+                }
             }
             FinishGenerationChange();
         }
 
         /**
          * Da die Veränderung einer Zelle während des Generationswechsels die anderen Zellen nicht beeinflussen darf,
-         * wird das Ergebnis des Wechsels in der Funktion NextGeneration() zwischengespeichert und nun für jede Zelle übernommen
+         * wird das Ergebnis des Wechsels zwischengespeichert und nun für jede Zelle übernommen
          */
         public void FinishGenerationChange()
         {
-            for (int i = 0; i <= Board.Count-1; i++)
+            foreach (var row in Board)
             {
-                List<Cell> row = Board[i];
-                for (int ii = 0; ii <= row.Count-1; ii++)
+                foreach (Cell cell in row)
                 {
-                    Cell cell = row[ii];
                     cell.EvolveCell();
-                } 
+                }
             }
         }
     }
