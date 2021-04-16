@@ -35,7 +35,6 @@ namespace Game_Of_Life
             return _neighbours.Contains(cell);
         }
 
-
         /**
          * For Testing
          */
@@ -48,12 +47,10 @@ namespace Game_Of_Life
         {
             return _cellIsAlive;
         }
-
         public void EvolveCell()
         { 
             _cellIsAlive = _cellLivesAfterGenerationChange;
         }
-
 
         public void CheckIfCellLivesAfterGenerationChange()
         {

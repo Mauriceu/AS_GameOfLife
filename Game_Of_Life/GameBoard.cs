@@ -63,8 +63,7 @@ namespace Game_Of_Life
                 try
                 {
                     neighbour = Board[posY + offsetY][posX + offsetX];
-                }
-                catch (Exception e) {}
+                } catch (Exception e) {}
 
                 if (neighbour != null &&
                     neighbour.ID != Board[posY][posX].ID &&
@@ -94,7 +93,7 @@ namespace Game_Of_Life
         /**
          * Das gespeicherte Ergebnis des Generationswechsel wird nun für jede Zelle übernommen
          */
-        public void FinishGenerationChange()
+        private void FinishGenerationChange()
         {
             foreach (var row in Board)
             {

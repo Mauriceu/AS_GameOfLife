@@ -7,9 +7,7 @@ namespace Game_Of_Life
     {
         public static void Main()
         {
-
             Test();
-
         }
 
         private static void Test()
@@ -17,7 +15,6 @@ namespace Game_Of_Life
             var board = new GameBoard();
             board.FillBoard(3, 3);
             RandomizeBoardValues(board.Board);
-            
             PrintBoard(board.Board);
             board.NextGeneration();
             PrintBoard(board.Board);
