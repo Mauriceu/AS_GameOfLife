@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace AS_GameOfLife
+namespace Game_Of_Life
 {
     public class Cell
     {
@@ -12,15 +12,15 @@ namespace AS_GameOfLife
         private const int BIRTH_MAXIMUM = 3;
 
         private readonly string _id;
-        private List<Cell> _neighbours;
+        private readonly List<Cell> _neighbours;
         private bool _cellLivesAfterGenerationChange;
         private bool _cellIsAlive;
 
-        public Cell(string id, bool value)
+        public Cell(string id)
         {
             _id = id;
             _neighbours = new List<Cell>();
-            _cellIsAlive = value;
+            _cellIsAlive = false;
             _cellLivesAfterGenerationChange = _cellIsAlive;
         }
 
@@ -30,8 +30,20 @@ namespace AS_GameOfLife
         {
             _neighbours.Add(neighbour);
         }
+        public bool HasNeighbour(Cell cell)
+        {
+            return _neighbours.Contains(cell);
+        }
 
-        
+
+        /**
+         * For Testing
+         */
+        public void SetStatus(bool value)
+        {
+            _cellIsAlive = value;
+            _cellLivesAfterGenerationChange = value;
+        }
         public bool IsAlive()
         {
             return _cellIsAlive;

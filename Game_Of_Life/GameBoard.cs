@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
-namespace AS_GameOfLife
+namespace Game_Of_Life
 {
     
     public class GameBoard
@@ -17,7 +16,8 @@ namespace AS_GameOfLife
         private int _height;
 
         /**
-         * Erstellt die 2D-Liste, anhand der Übergabeparameter wird die Größe festgelegt
+         * Erstellt die 2D-Liste,
+         * Anhand der Übergabeparameter wird die Größe (Höhe, Breite) festgelegt
          */
         public void FillBoard(int x, int y)
         {
@@ -25,41 +25,38 @@ namespace AS_GameOfLife
             _height = y;
             Board = new List<List<Cell>>();
 
-            Random r = new Random();
             for (int posY = 0; posY < _height; posY++)
             {
                 Board.Add(new List<Cell>());
                 for (int posX = 0; posX < _width; posX++)
                 {
-                    var value = false;
-                    int num = r.Next(1, 100);
-                    if (num < 40)
-                    {
-                        value = true;
-                    }
-
-                    Cell cell = new Cell((posY.ToString() + posX.ToString()), value);
-                    Board[posY].Add(cell);
-                } 
+                    Board[posY].Add(new Cell(posY.ToString() + posX));
+                }
+                SetNeighbourCells(posY);
             }
-            SetNeighbourCells();
         }
 
-        private void SetNeighbourCells()
+        /**
+         * Iteriert die aktuelle Board-Reihe ein zweites mal und setzt die Zelle der vorherigen Reihe (falls vorhanden)
+         * und die Zellen der aktuellen Reihe als Nachbarzellen
+         */
+        private void SetNeighbourCells(int posY)
         {
-            for (int posY = 0; posY < _height; posY++)
+            for (int posX = 0; posX < _width; posX++)
             {
-                for (int posX = 0; posX < _width; posX++)
-                {
-                    IterateRowHelper(posX, posY, -1);
-                    IterateRowHelper(posX, posY, 0);
-                    IterateRowHelper(posX, posY, 1);
-                } 
+                IterateRowHelper(posX, posY, -1);
+                IterateRowHelper(posX, posY, 0);
             }
         }
-
+        
+        /**
+         * Iteriert stumpf die aktuelle Reihe durch,
+         * ignoriert OutOfBounds-Errors:
+         * Diese bedeuten nämlich einfach, dass an diesem Platz keine Nachbarzelle existiert, da außerhalb des Spielfeldes
+         */
         private void IterateRowHelper(int posX, int posY, int offsetY)
         {
+            Cell currentCell = Board[posY][posX];
             for (var offsetX = -1; offsetX <= 1; offsetX++)
             {
                 Cell neighbour = null;
@@ -70,16 +67,17 @@ namespace AS_GameOfLife
                 catch (Exception e) {}
 
                 if (neighbour != null &&
-                    neighbour.ID != Board[posY][posX].ID)
+                    neighbour.ID != Board[posY][posX].ID &&
+                    !currentCell.HasNeighbour(neighbour))
                 {
-                    Board[posY][posX].AddNeighbour(neighbour);
+                    currentCell.AddNeighbour(neighbour);
+                    neighbour.AddNeighbour(currentCell);
                 }
             }
         }
 
         /**
          * Board wird von oben links nach unten rechts iteriert. Jede Zelle durchläuft die "lebt"/"stirbt"-Logik
-         * Die Veränderung einer Zelle während des Generationswechsels beeinflusst keine Nachbarzellen.
          */
         public void NextGeneration()
         {
@@ -94,8 +92,7 @@ namespace AS_GameOfLife
         }
 
         /**
-         * Da die Veränderung einer Zelle während des Generationswechsels die anderen Zellen nicht beeinflussen darf,
-         * wird das Ergebnis des Wechsels zwischengespeichert und nun für jede Zelle übernommen
+         * Das gespeicherte Ergebnis des Generationswechsel wird nun für jede Zelle übernommen
          */
         public void FinishGenerationChange()
         {

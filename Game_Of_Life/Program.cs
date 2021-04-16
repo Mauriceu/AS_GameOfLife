@@ -1,26 +1,39 @@
 using System;
 using System.Collections.Generic;
-using System.IO.Compression;
-using System.Threading;
 
-namespace AS_GameOfLife
+namespace Game_Of_Life
 {
     public class Program
     {
         public static void Main()
         {
 
-            //Test();
+            Test();
 
         }
 
         private static void Test()
         {
             var board = new GameBoard();
-            board.FillBoard(6, 6);
+            board.FillBoard(3, 3);
+            RandomizeBoardValues(board.Board);
+            
             PrintBoard(board.Board);
             board.NextGeneration();
             PrintBoard(board.Board);
+        }
+
+        private static void RandomizeBoardValues(List<List<Cell>> board)
+        {
+            var r = new Random();
+            foreach (var row in board)
+            {
+                foreach (var cell in row)
+                {  
+                    var value = r.Next(1, 100) < 50;
+                    cell.SetStatus(value);
+                }   
+            }
         }
         private static void PrintBoard(List<List<Cell>> board)
         {
