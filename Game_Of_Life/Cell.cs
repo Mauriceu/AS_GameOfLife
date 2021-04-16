@@ -24,6 +24,15 @@ namespace Game_Of_Life
             _cellLivesAfterGenerationChange = _cellIsAlive;
         }
 
+        /**
+         * For Testing
+         */
+        public void SetStatus(bool value)
+        {
+            _cellIsAlive = value;
+            _cellLivesAfterGenerationChange = value;
+        }
+
         public string ID => _id;
 
         public void AddNeighbour(Cell neighbour)
@@ -35,14 +44,6 @@ namespace Game_Of_Life
             return _neighbours.Contains(cell);
         }
 
-        /**
-         * For Testing
-         */
-        public void SetStatus(bool value)
-        {
-            _cellIsAlive = value;
-            _cellLivesAfterGenerationChange = value;
-        }
         public bool IsAlive()
         {
             return _cellIsAlive;

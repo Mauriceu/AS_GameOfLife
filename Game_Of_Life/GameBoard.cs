@@ -9,10 +9,9 @@ namespace Game_Of_Life
     {
 
         /**
-         * 2D-Liste, die alle existierenden Zellen beinhaltet
+         * 2D-Liste, enthält alle existierenden Zellen
          */
         public List<List<Cell>> Board;
-
         private int _width;
         private int _height;
 
@@ -45,17 +44,17 @@ namespace Game_Of_Life
         {
             for (int posX = 0; posX < _width; posX++)
             {
-                IterateRowHelper(posX, posY, -1);
-                IterateRowHelper(posX, posY, 0);
+                IterateRowHelper(posY, posX,-1);
+                IterateRowHelper(posY, posX,0);
             }
         }
         
         /**
-         * Iteriert stumpf die aktuelle Reihe durch,
+         * Iteriert die aktuelle Board-Reihe durch und setzt gefundene Zellen als Nachbarzellen,
          * ignoriert OutOfBounds-Error:
          * Diese bedeuten nämlich einfach, dass an diesem Platz keine Nachbarzelle existiert, da außerhalb des Spielfeldes
          */
-        private void IterateRowHelper(int posX, int posY, int offsetY)
+        private void IterateRowHelper(int posY, int posX,  int offsetY)
         {
             Cell currentCell = Board[posY][posX];
             for (var offsetX = -1; offsetX <= 1; offsetX++)
