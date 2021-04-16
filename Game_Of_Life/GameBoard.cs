@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Timers;
 
 namespace Game_Of_Life
 {
@@ -51,7 +52,7 @@ namespace Game_Of_Life
         
         /**
          * Iteriert stumpf die aktuelle Reihe durch,
-         * ignoriert OutOfBounds-Errors:
+         * ignoriert OutOfBounds-Error:
          * Diese bedeuten nämlich einfach, dass an diesem Platz keine Nachbarzelle existiert, da außerhalb des Spielfeldes
          */
         private void IterateRowHelper(int posX, int posY, int offsetY)
@@ -63,7 +64,11 @@ namespace Game_Of_Life
                 try
                 {
                     neighbour = Board[posY + offsetY][posX + offsetX];
-                } catch (Exception e) {}
+                }
+                catch (Exception e)
+                {
+                    // ignored
+                }
 
                 if (neighbour != null &&
                     neighbour.ID != Board[posY][posX].ID &&
@@ -101,6 +106,48 @@ namespace Game_Of_Life
                 {
                     cell.EvolveCell();
                 }
+            }
+        }
+
+        /**
+         * Interval in ms
+         */
+        public void NextGenerationOnTimer(int interval = 5000)
+        {
+            var timer = new Timer {Interval = interval};
+
+            timer.Elapsed += GenerationChangeOnTimerElapse;
+            timer.AutoReset = true;
+            timer.Enabled = true;
+        }
+
+        private void GenerationChangeOnTimerElapse(Object source, System.Timers.ElapsedEventArgs e)
+        {
+            NextGeneration();
+
+            //PrintBoard();
+        }
+        
+        
+        public void PrintBoard()
+        {
+            Console.WriteLine();
+            Console.WriteLine("---Board---");
+
+            for (int posY = 0; posY < Board.Count; posY++)
+            {
+                for (int posX = 0; posX < Board[posY].Count; posX++)
+                {
+                    var cell = Board[posY][posX];
+                    string txt = "0";
+                    if (cell.IsAlive())
+                    {
+                        txt = "1";
+                    }
+                    
+                    Console.Write(txt + " ");
+                }
+                Console.WriteLine();
             }
         }
     }
