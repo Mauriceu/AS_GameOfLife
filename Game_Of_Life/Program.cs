@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Timers;
 
 namespace Game_Of_Life
 {
@@ -7,32 +7,31 @@ namespace Game_Of_Life
     {
         public static void Main()
         {
-            Test();
-        }
-
-        private static void Test()
-        {
             var board = new GameBoard();
-            board.FillBoard(5, 5);
-            RandomizeBoardValues(board.Board);
-            board.PrintBoard();
-            //board.NextGeneration();
-            //board.PrintBoard();
-            board.NextGenerationOnTimer();
-            Console.ReadLine();
+            board.FillBoard();
         }
 
-        private static void RandomizeBoardValues(List<List<Cell>> board)
+        private static void PlayWithTimer(GameBoard board)
         {
-            var r = new Random();
-            foreach (var row in board)
-            {
-                foreach (var cell in row)
-                {  
-                    var value = r.Next(1, 100) < 50;
-                    cell.SetStatus(value);
-                }   
-            }
+            var timer = GetTimer();
+            timer.Elapsed += board.NextGeneration;
+
+            Console.WriteLine("Press Enter to end");
+            Console.Read();
         }
+        /**
+         * Interval in ms
+         */
+        private static Timer GetTimer(int interval = 5000)
+        {
+            return
+                new()
+                {
+                    Interval = interval,
+                    AutoReset = true,
+                    Enabled = true
+                };
+        }
+
     }
 }

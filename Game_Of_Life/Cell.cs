@@ -8,18 +8,15 @@ namespace Game_Of_Life
 
         private const int OVERPOPULATION_MINIMUM = 4;
         private const int SOLITUDE_MAXIMUM = 1;
-        private const int BIRTH_MINIMUM = 2;
-        private const int BIRTH_MAXIMUM = 3;
+        private const int BIRTH = 3;
 
-        private readonly string _id;
-        private readonly List<Cell> _neighbours;
         private bool _cellLivesAfterGenerationChange;
         private bool _cellIsAlive;
 
         public Cell(string id)
         {
-            _id = id;
-            _neighbours = new List<Cell>();
+            Id = id;
+            Neighbours = new List<Cell>();
             _cellIsAlive = false;
             _cellLivesAfterGenerationChange = _cellIsAlive;
         }
@@ -33,15 +30,17 @@ namespace Game_Of_Life
             _cellLivesAfterGenerationChange = value;
         }
 
-        public string ID => _id;
+        public string Id { get; }
+
+        public List<Cell> Neighbours { get; }
 
         public void AddNeighbour(Cell neighbour)
         {
-            _neighbours.Add(neighbour);
+            Neighbours.Add(neighbour);
         }
         public bool HasNeighbour(Cell cell)
         {
-            return _neighbours.Contains(cell);
+            return Neighbours.Contains(cell);
         }
 
         public bool IsAlive()
@@ -57,7 +56,7 @@ namespace Game_Of_Life
         {
             int livingNeighbours = 0;
 
-            foreach (var cell in _neighbours)
+            foreach (var cell in Neighbours)
             {
                 if (cell.IsAlive())
                 {
@@ -80,7 +79,7 @@ namespace Game_Of_Life
             }
 
             // Zelle wird geboren (falls Tod)
-            if (!IsAlive() && livingNeighbours is >= BIRTH_MINIMUM and <= BIRTH_MAXIMUM)
+            if (!IsAlive() && livingNeighbours == BIRTH)
             {
                 _cellLivesAfterGenerationChange = true;
             }

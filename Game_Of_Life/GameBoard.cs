@@ -13,22 +13,34 @@ namespace Game_Of_Life
          */
         public List<List<Cell>> Board;
         private int _width;
-        private int _height;
+        public int Width => _width;
 
+        private int _height;
+        public int Height => _height;
+
+
+        public GameBoard(int x, int y)
+        {
+            _width = x;
+            _height = y;
+        }
+        public GameBoard()
+        {
+            _width = 5;
+            _height = 5;
+        }
         /**
          * Erstellt die 2D-Liste,
          * Anhand der Übergabeparameter wird die Größe (Höhe, Breite) festgelegt
          */
-        public void FillBoard(int x, int y)
+        public void FillBoard()
         {
-            _width = x;
-            _height = y;
             Board = new List<List<Cell>>();
 
-            for (int posY = 0; posY < _height; posY++)
+            for (int posY = 0; posY < Height; posY++)
             {
                 Board.Add(new List<Cell>());
-                for (int posX = 0; posX < _width; posX++)
+                for (int posX = 0; posX < Width; posX++)
                 {
                     Board[posY].Add(new Cell(posY.ToString() + posX));
                 }
@@ -42,7 +54,7 @@ namespace Game_Of_Life
          */
         private void SetNeighbourCells(int posY)
         {
-            for (int posX = 0; posX < _width; posX++)
+            for (int posX = 0; posX < Width; posX++)
             {
                 IterateRowHelper(posY, posX,-1);
                 IterateRowHelper(posY, posX,0);
@@ -56,6 +68,11 @@ namespace Game_Of_Life
          */
         private void IterateRowHelper(int posY, int posX,  int offsetY)
         {
+            if ((posY + offsetY) == -1 || (posY + offsetY) == Height)
+            {
+                return;
+            }
+            
             Cell currentCell = Board[posY][posX];
             for (var offsetX = -1; offsetX <= 1; offsetX++)
             {
@@ -70,7 +87,7 @@ namespace Game_Of_Life
                 }
 
                 if (neighbour != null &&
-                    neighbour.ID != Board[posY][posX].ID &&
+                    neighbour.Id != Board[posY][posX].Id &&
                     !currentCell.HasNeighbour(neighbour))
                 {
                     currentCell.AddNeighbour(neighbour);
@@ -81,8 +98,9 @@ namespace Game_Of_Life
 
         /**
          * Board wird von oben links nach unten rechts iteriert. Jede Zelle durchläuft die "lebt"/"stirbt"-Logik
+         * Übergabeparameter werden von der Timer-Funktion erwartet, sind jedoch nicht notwendig
          */
-        public void NextGeneration()
+        public void NextGeneration(Object source = null, ElapsedEventArgs e = null)
         {
             foreach (var row in Board)
             {
@@ -105,48 +123,6 @@ namespace Game_Of_Life
                 {
                     cell.EvolveCell();
                 }
-            }
-        }
-
-        /**
-         * Interval in ms
-         */
-        public void NextGenerationOnTimer(int interval = 5000)
-        {
-            var timer = new Timer {Interval = interval};
-
-            timer.Elapsed += GenerationChangeOnTimerElapse;
-            timer.AutoReset = true;
-            timer.Enabled = true;
-        }
-
-        private void GenerationChangeOnTimerElapse(Object source, System.Timers.ElapsedEventArgs e)
-        {
-            NextGeneration();
-
-            //PrintBoard();
-        }
-        
-        
-        public void PrintBoard()
-        {
-            Console.WriteLine();
-            Console.WriteLine("---Board---");
-
-            for (int posY = 0; posY < Board.Count; posY++)
-            {
-                for (int posX = 0; posX < Board[posY].Count; posX++)
-                {
-                    var cell = Board[posY][posX];
-                    string txt = "0";
-                    if (cell.IsAlive())
-                    {
-                        txt = "1";
-                    }
-                    
-                    Console.Write(txt + " ");
-                }
-                Console.WriteLine();
             }
         }
     }
